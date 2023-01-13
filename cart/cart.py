@@ -34,11 +34,11 @@ class Cart:
             # won't affect products in the cart in the current session.
             self.cart[product_id] = {'quantity': 0,
                                      'price': str(product.price)}
-            if override_quantity:
-                self.cart[product_id]['quantity'] = quantity
-            else:
-                self.cart[product_id]['quantity'] += quantity
-            self.save()
+        if override_quantity:
+            self.cart[product_id]['quantity'] = quantity
+        else:
+            self.cart[product_id]['quantity'] += quantity
+        self.save()
 
     def save(self):
         """
@@ -73,7 +73,7 @@ class Cart:
 
         for item in cart.values():
             item['price'] = Decimal(item['price'])
-            item['total price'] = item['price'] * item['quantity']
+            item['total_price'] = item['price'] * item['quantity']
             yield item
 
     def __len__(self):
