@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # changed setting for shop app to allow for use of signals
     'shop.apps.ShopConfig',
     'cart.apps.CartConfig',
+    'orders.apps.OrdersConfig',
 ]
 
 MIDDLEWARE = [
