@@ -55,4 +55,11 @@ def cart_detail(request):
     :return: redirect to the cart_detail page.
     """
     cart = Cart(request)
+
+    # form for updating quantity in the cart
+    for item in cart:
+        item['update_quantity_form'] = CartAddProductForm(initial={
+                            'quantity': item['quantity'],
+                            'override': True})
+
     return render(request, 'cart/detail.html', {'cart': cart})
