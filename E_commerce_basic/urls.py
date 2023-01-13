@@ -18,8 +18,10 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
 
+# add more restrictive patterns before less restrictive!
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cart/', include('cart.urls', namespace='cart')),
     path('', include('shop.urls', namespace='shop')),
 ]
 
