@@ -25,7 +25,7 @@ Your shopping cart
                 <td>
                     <a href="{{ product.get_absolute_url }}">
                         <img src="{% if product.image %}
-                    {{ product.image }}
+                    {{ product.image.url }}
                   {% else %}
                   {% static 'img/no_image.png' %}
                   {% endif %}" alt="product image">
@@ -43,12 +43,8 @@ Your shopping cart
                     {% csrf_token %}
                 </form>
             </td>
-            <td class="num">
-                ${{ item.price }}
-            </td>
-            <td class="num">
-                ${{ item.total_price }}
-            </td>
+            <td class="num">${{ item.price }}</td>
+            <td class="num">${{ item.total_price }}</td>
             </tr>
             {% endwith %}
     {% endfor %}
