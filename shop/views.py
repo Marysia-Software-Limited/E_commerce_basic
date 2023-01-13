@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Product
 
+# adds Add to Cart button logic to product_detail view
+from cart.forms import CartAddProductForm
+
 
 def product_list(request, category_slug=None):
     """
@@ -34,12 +37,14 @@ def product_detail(request, id, slug):
     :param request: required parameter for any view function
     :param id: product id
     :param slug: product slug; its inclusion allows for SEO-friendly URLs
-    :return: details of a product or 'not found' error page.
+    :return: details of a product with add to cart form
+        or 'not found' error page.
     """
     product = get_object_or_404(Product,
                                 id=id,
                                 slug=slug,
                                 available=True)
-
+    cart_product_form = CartAddProductForm()
     return render(request, 'shop/product/detail.html',
-                  {'product': product})
+                  {'product': product,
+                   'cart_product_form': cart_product_form})
