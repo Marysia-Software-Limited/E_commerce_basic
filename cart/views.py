@@ -55,4 +55,4 @@ def cart_detail(request):
     :return: redirect to the cart_detail page.
     """
     cart = Cart(request)
-    return render(request, 'cart/cart_detail.html', {'cart': cart})
+    return render(request, 'cart/detail.html', {'cart': cart})
