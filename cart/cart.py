@@ -94,5 +94,5 @@ class Cart:
         """
         Remove cart from the session.
         """
-        del self.cart.session[settings.CART_SESSION_ID]
+        del self.session[settings.CART_SESSION_ID]
         self.save()
