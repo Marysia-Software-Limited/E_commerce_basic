@@ -150,3 +150,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CART_SESSION_ID = 'cart'
+
+# Email server configuration (set it up for a customer)
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'monika@marysia.app'
+EMAIL_HOST_PASSWORD = 'efrcgzwzirjpdsxb'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
