@@ -151,6 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CART_SESSION_ID = 'cart'
 
+
 # Email server configuration (set it up for a customer)
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = config.EMAIL_HOST_USER
