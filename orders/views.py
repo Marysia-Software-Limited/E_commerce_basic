@@ -12,6 +12,7 @@ def order_create(request):
     :return:
     """
     cart = Cart(request)
+    total = 0
     if request.method == 'POST':
         form = OrderCreateForm(request.POST)
         if form.is_valid():
@@ -21,11 +22,12 @@ def order_create(request):
                                          product=item['product'],
                                          price=item['price'],
                                          quantity=item['quantity'])
+                total += int(item['price']) * int(item['quantity'])
             # clear the cart
             cart.clear()
 
             # launching asynchronous task - send an email notification
-            order_created.delay(order.id)
+            order_created.delay(order.id, total)
 
             return render(request,
                           'orders/order/created.html',
