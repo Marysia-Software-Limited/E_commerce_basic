@@ -18,6 +18,6 @@ celery>=5.2.7
 
 # for Stripe and pdf printing there will be extra packages required:
 # Stripe python package https://pypi.org/project/stripe/
-# stripe >= 4.0.2
+stripe >= 4.0.2
 # WeasyPrint document factory https://doc.courtbouillon.org/weasyprint/stable/
 # WeasyPrint == 56.1
