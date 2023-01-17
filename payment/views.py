@@ -11,7 +11,13 @@ stripe.api_version = settings.STRIPE_API_VERSION
 
 
 def payment_process(request):
-
+    """
+    Display the order summary to the user,
+    creates the Stripe checkout session
+    and redirects the user to the Stripe-hosted payment form.
+    :param request: required parameter in a view function
+    :return: render payment/process.html
+    """
     order_id = request.session.get('order_id', None)
     order = get_object_or_404(Order, id=order_id)
 
@@ -33,7 +39,10 @@ def payment_process(request):
         for item in order.items.all():
             session_data['line_items'].append({
                 'price_data': {
+                    # the amount in the smallest currency unit with no decimal places to be collected
                     'unit_amount': int(item.price * Decimal('100')),
+                    # currency to use in three-letter ISO format
+                    # see supported currencies at https://stripe.com/docs/currencies
                     'currency': 'usd',
                     'product_data': {
                         'name': item.product.name,
@@ -49,3 +58,23 @@ def payment_process(request):
 
     else:
         return render(request, 'payment/process.html', locals())
+
+
+def payment_completed(request):
+    """
+    Display the page to which Stripe directs
+    the user when the payment is successful.
+    :param request: required parameter in a view function
+    :return: render payment/completed.html
+    """
+    return render(request, 'payment/completed.html')
+
+
+def payment_canceled(request):
+    """
+    Display the page to which Stripe directs
+    the user when the payment is canceled/unsuccessful.
+    :param request: required parameter in a view function
+    :return: render payment/canceled.html
+    """
+    return render(request, 'payment/canceled.html')
