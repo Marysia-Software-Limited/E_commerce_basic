@@ -23,8 +23,15 @@ DEFAULT_CONFIG = (
     ('POSTGRES_HOST', 'db'),
     ('POSTGRES_PORT', ''),
     ('SECRET_KEY', 'secret_key'),
+
+    # Email server settings here:
     ('EMAIL_HOST_USER', 'email_host_user'),
     ('EMAIL_HOST_PASSWORD', 'email_host_password'),
+
+    # Stripe settings.
+    ('STRIPE_PUBLISHABLE_KEY', 'stripe_public_key'),
+    ('STRIPE_SECRET_KEY', 'stripe_secret_key'),
+    ('STRIPE_API_VERSION', 'stripe_api_version'),
 )
 
 ENV_FILES = (

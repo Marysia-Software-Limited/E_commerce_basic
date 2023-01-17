@@ -158,3 +158,11 @@ EMAIL_HOST_USER = config.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# Stripe settings.
+# Keys for Stripe are stored in environmental variables for security.
+# The Stripe API version is stored in environmental variable for easy update.
+STRIPE_PUBLISHABLE_KEY = config.STRIPE_PUBLISHABLE_KEY
+STRIPE_SECRET_KEY = config.STRIPE_SECRET_KEY
+STRIPE_API_VERSION = config.STRIPE_API_VERSION
+
