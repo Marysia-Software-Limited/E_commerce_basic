@@ -13,4 +13,11 @@ asgiref>=3.5.2
 sqlparse>=0.4.2
 Pillow>=9.2.0
 flower>=1.2.0
+# Celery documentation is here https://docs.celeryq.dev/en/latest/
 celery>=5.2.7
+
+# for Stripe and pdf printing there will be extra packages required:
+# Stripe python package https://pypi.org/project/stripe/
+# stripe >= 4.0.2
+# WeasyPrint document factory https://doc.courtbouillon.org/weasyprint/stable/
+# WeasyPrint == 56.1
