@@ -32,6 +32,7 @@ DEFAULT_CONFIG = (
     ('STRIPE_PUBLISHABLE_KEY', 'stripe_public_key'),
     ('STRIPE_SECRET_KEY', 'stripe_secret_key'),
     ('STRIPE_API_VERSION', 'stripe_api_version'),
+    ('STRIPE_WEBHOOK_SECRET', 'stripe_webhook_secret'),
 )
 
 ENV_FILES = (
