@@ -14,6 +14,7 @@ def export_to_csv(modeladmin, request, queryset):
     it contains an attached file.
     Create a csv writer object that will
     write to the response object.
+
     Get model fields dynamically using get_fields()
     method of the model's _meta options, excluding
     many-to-many and one-to-many relationships.
@@ -22,6 +23,9 @@ def export_to_csv(modeladmin, request, queryset):
     a row for each object returned by the Queryset,
     making sure the datetime is formatted as a string
     as required by csv file.
+
+    This generic administration action
+    can be added to any ModelAdmin class.
     """
     opts = modeladmin.model._meta
     content_disposition = f'attachment; filename={opts.verbose_name}.csv'
@@ -78,3 +82,5 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ['paid', 'created', 'updated']
     inlines = [OrderItemInLine]
 
+    # adding export_to_csv action to the OrderAdmin class
+    actions = [export_to_csv]
