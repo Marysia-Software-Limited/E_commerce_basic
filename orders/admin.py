@@ -1,6 +1,53 @@
+import csv
+import datetime
+from django.http import HttpResponse
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import Order, OrderItem
+
+
+def export_to_csv(modeladmin, request, queryset):
+    """
+    Create an instance of HTTPResponse specifying
+    the text/csv content type and indicating
+    with content_disposition header that
+    it contains an attached file.
+    Create a csv writer object that will
+    write to the response object.
+    Get model fields dynamically using get_fields()
+    method of the model's _meta options, excluding
+    many-to-many and one-to-many relationships.
+    Write the row headers using field names
+    and iterate over the given queryset to write
+    a row for each object returned by the Queryset,
+    making sure the datetime is formatted as a string
+    as required by csv file.
+    """
+    opts = modeladmin.model._meta
+    content_disposition = f'attachment; filename={opts.verbose_name}.csv'
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = content_disposition
+    writer = csv.writer(response)
+    fields = [field for field in opts.get_fields() if not field.many_to_many and not field.one_to_many]
+
+    # write first row with header information
+    writer.writerow([field.verbose_name for field in fields])
+
+    # write data rows
+    for obj in queryset:
+        data_row = []
+        for field in fields:
+            value = getattr(obj, field.name)
+            if isinstance(value, datetime.datetime):
+                value = value.strftime('%d/%m/%Y')
+            data_row.append(value)
+        writer.writerow(data_row)
+    return response
+
+
+# customise the display name for the action
+# in the drop-down element of the administration site
+export_to_csv.short_description = 'Export to CSV'
 
 
 def order_payment(obj):
@@ -12,6 +59,8 @@ def order_payment(obj):
     return ''
 
 
+# customise the display name for the action
+# in the element of the administration site
 order_payment.short_description = 'Stripe payment'
 
 
