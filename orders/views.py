@@ -1,6 +1,7 @@
 from django.urls import reverse
-from django.shortcuts import render, redirect
-from .models import OrderItem
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import OrderItem, Order
 from .forms import OrderCreateForm
 from cart.cart import Cart
 from .tasks import order_created
@@ -40,3 +41,22 @@ def order_create(request):
     return render(request,
                   'orders/order/create.html',
                   {'cart': cart, 'form': form})
+
+
+@staff_member_required
+def admin_order_detail(request, order_id):
+    """
+    Get the Order object with given ID and
+    display details of the order in the customised template.
+
+    The staff_member_required decorator ensures that both is_active
+    and is_staff fields of the user requesting the page are set to TRUE.
+
+    :param request: required parameter of any view function
+    :param order_id: id field of the Order model
+    :return:  render a detailed admin page for the given order.
+    """
+    order = get_object_or_404(Order, id=order_id)
+    return render(request,
+                  'admin/orders/order/detail.html',
+                  {'order': order})
