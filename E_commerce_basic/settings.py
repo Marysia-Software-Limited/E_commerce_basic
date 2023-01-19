@@ -170,3 +170,4 @@ STRIPE_API_VERSION = config.STRIPE_API_VERSION
 # Stripe webhook endpoint secret. Needs to be updated for production.
 STRIPE_WEBHOOK_SECRET = config.STRIPE_WEBHOOK_SECRET
 
+STATIC_ROOT = BASE_DIR / 'static'
