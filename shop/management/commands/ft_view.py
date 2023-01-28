@@ -10,8 +10,8 @@ def main(page: ft.Page):
 
     page.theme_mode = ft.ThemeMode.SYSTEM
 
-    def store_url(_):
-        return page.go('/store')
+    def products_url(_):
+        return page.go('/products')
 
     def main_url(_):
         return page.go("/")
@@ -20,7 +20,7 @@ def main(page: ft.Page):
         if e.data == '0':
             return page.go('/')
         elif e.data == '1':
-            return page.go('/store')
+            return page.go('/products')
 
     page.navigation_bar = ft.NavigationBar(
         destinations=[
@@ -29,7 +29,7 @@ def main(page: ft.Page):
                 label="Home"),
             ft.NavigationDestination(
                 icon=ft.icons.STORE_OUTLINED,
-                label="Store"),
+                label="Products"),
         ],
         on_change=navbar
     )
@@ -40,22 +40,22 @@ def main(page: ft.Page):
             ft.View(
                 "/",
                 [
-                    ft.AppBar(title=ft.Text("Flet app"), bgcolor=ft.colors.SURFACE_VARIANT, center_title=True),
-                    ft.ElevatedButton("Visit Store", on_click=store_url),
+                    ft.AppBar(title=ft.Text("Endorsed by The Sea Nation"), bgcolor=ft.colors.SURFACE_VARIANT, center_title=True),
+                    ft.ElevatedButton("List products", on_click=products_url),
                     page.navigation_bar,
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             )
         )
 
-        if page.route == "/store":
+        if page.route == "/products":
             page.views.clear()
             page.views.append(
                 ft.View(
-                    "/store",
+                    "/products",
                     [
                         logo,
-                        images,
+                        product_images,
                         page.navigation_bar,
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -74,27 +74,8 @@ def main(page: ft.Page):
         height=100,
         fit=ft.ImageFit.FILL,
     )
-    images = ft.Row(expand=1, wrap=True, scroll="always")
-
-    # for i in range(0, 30):
-    #     images.controls.append(
-    #         ft.ElevatedButton(
-    #             style=ft.ButtonStyle(
-    #
-    #                 overlay_color=ft.colors.TRANSPARENT,
-    #                 elevation={"pressed": 0, "": 0},
-    #             ),
-    #             content=ft.Image(
-    #                 src=f"https://picsum.photos/300/?{i}",
-    #                 # width=200,
-    #                 # height=200,
-    #                 fit=ft.ImageFit.FILL,
-    #                 repeat=ft.ImageRepeat.NO_REPEAT,
-    #                 border_radius=ft.border_radius.all(10),
-    #             ),
-    #             on_click=main_url,
-    #         )
-    #     )
+    product_images = ft.Row(expand=1, wrap=True, scroll="always")
+    category_images = ft.Row(expand=1, wrap=True, scroll='always')
 
     categories = Category.objects.all()
     products = Product.objects.filter(available=True)
@@ -106,7 +87,7 @@ def main(page: ft.Page):
 
         if product.image:
             # image_link = join(base_dir, product.image.url)
-            images.controls.append(
+            product_images.controls.append(
                 ft.ElevatedButton(
                     style=ft.ButtonStyle(
 
@@ -126,7 +107,7 @@ def main(page: ft.Page):
             )
             print(f'{localhost}{product.image.url}')
         else:
-            images.controls.append(
+            product_images.controls.append(
                 ft.ElevatedButton(
                     style=ft.ButtonStyle(
 
