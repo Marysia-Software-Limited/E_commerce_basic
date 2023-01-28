@@ -1,6 +1,8 @@
 import flet as ft
-from flet import CrossAxisAlignment
+
+# from os.path import join
 from shop.models import Product, Category
+# from E_commerce_basic.settings import BASE_DIR as base_dir
 
 
 def main(page: ft.Page):
@@ -42,7 +44,7 @@ def main(page: ft.Page):
                     ft.ElevatedButton("Visit Store", on_click=store_url),
                     page.navigation_bar,
                 ],
-                horizontal_alignment=CrossAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             )
         )
 
@@ -56,7 +58,7 @@ def main(page: ft.Page):
                         images,
                         page.navigation_bar,
                     ],
-                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 )
             )
         page.update()
@@ -94,13 +96,16 @@ def main(page: ft.Page):
     #         )
     #     )
 
-    # categories = Category.objects.all()
+    categories = Category.objects.all()
     products = Product.objects.filter(available=True)
 
     for product in products:
 
         link = product.get_absolute_url()
+        localhost = 'http://127.0.0.1:8000'
+
         if product.image:
+            # image_link = join(base_dir, product.image.url)
             images.controls.append(
                 ft.ElevatedButton(
                     style=ft.ButtonStyle(
@@ -109,7 +114,7 @@ def main(page: ft.Page):
                         elevation={"pressed": 0, "": 0},
                     ),
                     content=ft.Image(
-                        src=f"{product.image.url}",
+                        src=f"{localhost}{product.image.url}",
                         width=200,
                         height=200,
                         fit=ft.ImageFit.FILL,
@@ -119,6 +124,7 @@ def main(page: ft.Page):
                     on_click=link,
                 )
             )
+            print(f'{localhost}{product.image.url}')
         else:
             images.controls.append(
                 ft.ElevatedButton(
