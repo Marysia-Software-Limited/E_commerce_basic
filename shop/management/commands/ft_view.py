@@ -2,6 +2,8 @@ import flet as ft
 
 # from os.path import join
 from shop.models import Product, Category
+
+
 # from E_commerce_basic.settings import BASE_DIR as base_dir
 
 
@@ -40,8 +42,11 @@ def main(page: ft.Page):
             ft.View(
                 "/",
                 [
-                    ft.AppBar(title=ft.Text("Endorsed by The Sea Nation"), bgcolor=ft.colors.SURFACE_VARIANT, center_title=True),
-                    ft.ElevatedButton("List products", on_click=products_url),
+                    ft.AppBar(title=ft.Text("Endorsed by The Sea Nation"),
+                              bgcolor=ft.colors.SURFACE_VARIANT,
+                              center_title=True),
+                    ft.ElevatedButton("List products",
+                                      on_click=products_url),
                     page.navigation_bar,
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -74,7 +79,11 @@ def main(page: ft.Page):
         height=100,
         fit=ft.ImageFit.FILL,
     )
-    product_images = ft.Row(expand=1, wrap=True, scroll="always")
+    product_images = ft.Row(expand=1, wrap=True,
+                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            scroll="always")
+
     category_images = ft.Row(expand=1, wrap=True, scroll='always')
 
     categories = Category.objects.all()
@@ -88,43 +97,87 @@ def main(page: ft.Page):
         if product.image:
             # image_link = join(base_dir, product.image.url)
             product_images.controls.append(
-                ft.ElevatedButton(
-                    style=ft.ButtonStyle(
+                ft.Container(
+                    content=ft.Column(
+                        [ft.Image(
+                            src=f"{localhost}{product.image.url}",
+                            width=500,
+                            height=500,
+                            fit=ft.ImageFit.FILL,
+                            repeat=ft.ImageRepeat.NO_REPEAT,
+                            border_radius=ft.border_radius.all(10),
+                        ),
+                            ft.Row(
+                                [ft.Text(product.name,
+                                         size=20,
+                                         weight=ft.FontWeight.W_300),
+                                 ft.Text(product.price,
+                                         size=26,
+                                         weight=ft.FontWeight.W_900)],
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                            ),
+                        ]
+                    ),
+                    margin=10,
+                    padding=10,
+                    alignment=ft.alignment.center,
+                    width=500,
+                    height=550,
+                    border_radius=10,
+                    ink=True,
+                    on_click=main_url,
 
-                        overlay_color=ft.colors.TRANSPARENT,
-                        elevation={"pressed": 0, "": 0},
-                    ),
-                    content=ft.Image(
-                        src=f"{localhost}{product.image.url}",
-                        width=200,
-                        height=200,
-                        fit=ft.ImageFit.FILL,
-                        repeat=ft.ImageRepeat.NO_REPEAT,
-                        border_radius=ft.border_radius.all(10),
-                    ),
-                    on_click=link,
                 )
             )
             print(f'{localhost}{product.image.url}')
         else:
             product_images.controls.append(
-                ft.ElevatedButton(
-                    style=ft.ButtonStyle(
-
-                        overlay_color=ft.colors.TRANSPARENT,
-                        elevation={"pressed": 0, "": 0},
+                ft.Container(
+                    content=ft.Column(
+                        [ft.Card(
+                            ft.Column(
+                                [
+                                    ft.Row(height=250),
+                                    ft.Text('No photo available now',
+                                            width=500,
+                                            height=250,
+                                            size=26,
+                                            weight=ft.FontWeight.W_600,
+                                            text_align=ft.TextAlign.CENTER
+                                            ),
+                                ]
+                                #     ft.Image(
+                                #     src=f"static/img/no_image.png",
+                                #     width=500,
+                                #     height=500,
+                                #     fit=ft.ImageFit.FILL,
+                                #     repeat=ft.ImageRepeat.NO_REPEAT,
+                                #     border_radius=ft.border_radius.all(10),
+                                # ),
+                            )
+                        ),
+                            ft.Row(
+                                [ft.Text(product.name,
+                                         size=20,
+                                         weight=ft.FontWeight.W_300),
+                                 ft.Text(product.price,
+                                         size=26,
+                                         weight=ft.FontWeight.W_900)],
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                            )
+                        ]
                     ),
-                    content=ft.Image(
-                        src=f"static/img/no_image.png",
-                        width=200,
-                        height=200,
-                        fit=ft.ImageFit.FILL,
-                        repeat=ft.ImageRepeat.NO_REPEAT,
-                        border_radius=ft.border_radius.all(10),
-                    ),
-                    on_click=link,
+                    margin=10,
+                    padding=10,
+                    alignment=ft.alignment.center,
+                    width=500,
+                    height=550,
+                    border_radius=10,
+                    ink=True,
+                    on_click=main_url,
                 )
             )
+
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     page.go(page.route)
