@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'orders.apps.OrdersConfig',
     'payment.apps.PaymentConfig',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -171,3 +172,5 @@ STRIPE_API_VERSION = config.STRIPE_API_VERSION
 STRIPE_WEBHOOK_SECRET = config.STRIPE_WEBHOOK_SECRET
 
 STATIC_ROOT = BASE_DIR / 'static'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True

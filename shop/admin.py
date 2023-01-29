@@ -1,3 +1,4 @@
+from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from .models import Category, Product
 # Register your models here.
@@ -15,7 +16,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ImportExportModelAdmin):
     """
     Register the 'Product' model with a predefined list
     of fields displayed in admin site;
