@@ -12,6 +12,20 @@ def main(page: ft.Page):
 
     page.theme_mode = ft.ThemeMode.SYSTEM
 
+    category_images = ft.Row(expand=1, wrap=True,
+                             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                             scroll="always")
+
+    categories = Category.objects.all()
+
+    product_images = ft.Row(expand=1, wrap=True,
+                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            scroll="always")
+
+    products = Product.objects.filter(available=True)
+
     def products_url(_):
         return page.go('/products')
 
@@ -45,6 +59,16 @@ def main(page: ft.Page):
                     ft.AppBar(title=ft.Text("Endorsed by The Sea Nation"),
                               bgcolor=ft.colors.SURFACE_VARIANT,
                               center_title=True),
+                    ft.Text('The Way It Should Be', style=ft.TextThemeStyle.DISPLAY_LARGE),
+                    ft.Text('We founded Endorsed by The Sea Nation with one goal in mind: providing a high-quality, '
+                            'smart, and reliable online store. Our passion for excellence has driven us from the '
+                            'beginning and continues to drive us into the future. We know that every product counts, '
+                            'and strive to make the entire shopping experience as rewarding as possible. Check it out '
+                            'for yourself!',
+                            text_align=ft.TextAlign.JUSTIFY,
+                            style=ft.TextThemeStyle.TITLE_LARGE,
+                            no_wrap=False,
+                            ),
                     ft.ElevatedButton("List products",
                                       on_click=products_url),
                     page.navigation_bar,
@@ -81,15 +105,6 @@ def main(page: ft.Page):
         height=100,
         fit=ft.ImageFit.FILL,
     )
-    product_images = ft.Row(expand=1, wrap=True,
-                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            scroll="always")
-
-    category_images = ft.Row(expand=1, wrap=True, scroll='always')
-
-    categories = Category.objects.all()
-    products = Product.objects.filter(available=True)
 
     for product in products:
 
