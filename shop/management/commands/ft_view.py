@@ -112,7 +112,7 @@ def main(page: ft.Page):
         localhost = 'http://127.0.0.1:8000'
 
         if product.image:
-            # image_link = join(base_dir, product.image.url)
+
             product_images.controls.append(
                 ft.Container(
                     content=ft.Column(
@@ -127,7 +127,9 @@ def main(page: ft.Page):
                             ft.Row(
                                 [ft.Text(product.name,
                                          size=20,
-                                         weight=ft.FontWeight.W_300),
+                                         weight=ft.FontWeight.W_300,
+                                         width=300,
+                                         no_wrap=False),
                                  ft.Text(product.price,
                                          size=26,
                                          weight=ft.FontWeight.W_900)],
@@ -139,7 +141,7 @@ def main(page: ft.Page):
                     padding=10,
                     alignment=ft.alignment.center,
                     width=500,
-                    height=550,
+                    height=650,
                     border_radius=10,
                     ink=True,
                     on_click=main_url,
@@ -168,7 +170,9 @@ def main(page: ft.Page):
                             ft.Row(
                                 [ft.Text(product.name,
                                          size=20,
-                                         weight=ft.FontWeight.W_300),
+                                         weight=ft.FontWeight.W_300,
+                                         width=300,
+                                         no_wrap=False),
                                  ft.Text(product.price,
                                          size=26,
                                          weight=ft.FontWeight.W_900)],
@@ -180,7 +184,7 @@ def main(page: ft.Page):
                     padding=10,
                     alignment=ft.alignment.center,
                     width=500,
-                    height=550,
+                    height=650,
                     border_radius=10,
                     ink=True,
                     on_click=main_url,

@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
     of fields displayed in admin site;
     Create slug automatically from name.
     """
-    list_display = ['name', 'slug']
+    list_display = ['id', 'name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
 
 
