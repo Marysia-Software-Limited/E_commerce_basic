@@ -59,7 +59,9 @@ def main(page: ft.Page):
                 ft.View(
                     "/products",
                     [
-                        logo,
+                        ft.AppBar(title=ft.Text("Our products:"),
+                                  bgcolor=ft.colors.SURFACE_VARIANT,
+                                  center_title=True),
                         product_images,
                         page.navigation_bar,
                     ],
