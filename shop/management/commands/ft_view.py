@@ -1,38 +1,51 @@
 import flet as ft
 
-# from os.path import join
 from shop.models import Product, Category
 
 
-# from E_commerce_basic.settings import BASE_DIR as base_dir
-
-
 def main(page: ft.Page):
-    page.title = "Product List"
+
+    # defining page title and ThemeMode control
+    page.title = "Shop app Django/Flet"
 
     page.theme_mode = ft.ThemeMode.SYSTEM
 
-    category_images = ft.Row(expand=1, wrap=True,
-                             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                             scroll="always")
+    # category_images = ft.Row(expand=1, wrap=True,
+    #                          alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+    #                          vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    #                          scroll="always")
 
+    # define groups of items to be displayed in views, to be used as parameters to view functions:
     categories = Category.objects.all()
-
-    product_images = ft.Row(expand=1, wrap=True,
-                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            scroll="always")
 
     products = Product.objects.filter(available=True)
 
+    # define a logo for the app and its location
+    logo = ft.Image(
+        src=f"http://127.0.0.1:8000/media/img/logo.png",
+        width=400,
+        height=400,
+        fit=ft.ImageFit.FILL,
+    )
+
+    # routing for a NavigationBar control in navbar function
     def products_url(_):
         return page.go('/products')
 
     def main_url(_):
         return page.go("/")
 
+    def product_detail_url(_):
+        return page.go('/product_detail')
+
     def navbar(e):
+        """
+        Define the NavigationBar control behaviour.
+
+        :param e: event
+        :return: return routing url depending on
+            a chosen button of NavigationBar control
+        """
         if e.data == '0':
             return page.go('/')
         elif e.data == '1':
@@ -51,6 +64,14 @@ def main(page: ft.Page):
     )
 
     def route_change(route):
+        """
+        Define the views to be displayed on the app depending
+        on the route defined by routing functions,
+        clear page views and render new views.
+
+        :param route: Route returned by routing functions
+        :return: return page update to a required set of views.
+        """
         page.views.clear()
         page.views.append(
             ft.View(
@@ -60,6 +81,7 @@ def main(page: ft.Page):
                               bgcolor=ft.colors.SURFACE_VARIANT,
                               center_title=True),
                     ft.Text('The Way It Should Be', style=ft.TextThemeStyle.DISPLAY_LARGE),
+                    logo,
                     ft.Text('We founded Endorsed by The Sea Nation with one goal in mind: providing a high-quality, '
                             'smart, and reliable online store. Our passion for excellence has driven us from the '
                             'beginning and continues to drive us into the future. We know that every product counts, '
@@ -86,7 +108,22 @@ def main(page: ft.Page):
                         ft.AppBar(title=ft.Text("Our products:"),
                                   bgcolor=ft.colors.SURFACE_VARIANT,
                                   center_title=True),
-                        product_images,
+                        view_multiple(products),
+                        page.navigation_bar,
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+            )
+        elif page.route == '/product_detail':
+            page.views.clear()
+            page.views.append(
+                ft.View(
+                    "/products",
+                    [
+                        ft.AppBar(title=ft.Text("Our products:"),
+                                  bgcolor=ft.colors.SURFACE_VARIANT,
+                                  center_title=True),
+                        view_multiple(products),
                         page.navigation_bar,
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -99,97 +136,107 @@ def main(page: ft.Page):
         top_view = page.views[-1]
         page.go(top_view.route)
 
-    logo = ft.Image(
-        src=f"/icons/icon-512.png",
-        width=100,
-        height=100,
-        fit=ft.ImageFit.FILL,
-    )
+    def view_multiple(items):
+        """
+        Display multiple elements of a group passed as a parameter.
+        Return a responsive view of its elements.
 
-    for product in products:
-
-        link = product.get_absolute_url()
+        :param items: parameter passed to the view is a name of
+            a group to be displayed (products, services, categories etc.)
+        :return: return the responsive view of elements
+            of the group passed as a parameter.
+        """
         localhost = 'http://127.0.0.1:8000'
+        items_list = ft.Row(expand=1, wrap=True,
+                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            scroll="always")
 
-        if product.image:
+        for item in items:
 
-            product_images.controls.append(
-                ft.Container(
-                    content=ft.Column(
-                        [ft.Image(
-                            src=f"{localhost}{product.image.url}",
-                            width=500,
-                            height=500,
-                            fit=ft.ImageFit.FILL,
-                            repeat=ft.ImageRepeat.NO_REPEAT,
-                            border_radius=ft.border_radius.all(10),
-                        ),
-                            ft.Row(
-                                [ft.Text(product.name,
-                                         size=20,
-                                         weight=ft.FontWeight.W_300,
-                                         width=300,
-                                         no_wrap=False),
-                                 ft.Text(product.price,
-                                         size=26,
-                                         weight=ft.FontWeight.W_900)],
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            link = item.get_absolute_url()
+            if item.image:
+
+                items_list.controls.append(
+                    ft.Container(
+                        content=ft.Column(
+                            [ft.Image(
+                                src=f"{localhost}{item.image.url}",
+                                width=500,
+                                height=500,
+                                fit=ft.ImageFit.FILL,
+                                repeat=ft.ImageRepeat.NO_REPEAT,
+                                border_radius=ft.border_radius.all(10),
                             ),
-                        ]
-                    ),
-                    margin=10,
-                    padding=10,
-                    alignment=ft.alignment.center,
-                    width=500,
-                    height=650,
-                    border_radius=10,
-                    ink=True,
-                    on_click=main_url,
-
-                )
-            )
-            print(f'{localhost}{product.image.url}')
-        else:
-            product_images.controls.append(
-                ft.Container(
-                    content=ft.Column(
-                        [ft.Card(
-                            ft.Column(
-                                [
-                                    ft.Row(height=250),
-                                    ft.Text('No photo available now',
-                                            width=500,
-                                            height=250,
-                                            size=26,
-                                            weight=ft.FontWeight.W_600,
-                                            text_align=ft.TextAlign.CENTER
-                                            ),
-                                ]
-                            )
+                                ft.Row(
+                                    [ft.Text(item.name,
+                                             size=20,
+                                             weight=ft.FontWeight.W_300,
+                                             width=300,
+                                             no_wrap=False),
+                                     ft.Text(item.price,
+                                             size=26,
+                                             weight=ft.FontWeight.W_900)],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                                ),
+                            ]
                         ),
-                            ft.Row(
-                                [ft.Text(product.name,
-                                         size=20,
-                                         weight=ft.FontWeight.W_300,
-                                         width=300,
-                                         no_wrap=False),
-                                 ft.Text(product.price,
-                                         size=26,
-                                         weight=ft.FontWeight.W_900)],
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                            )
-                        ]
-                    ),
-                    margin=10,
-                    padding=10,
-                    alignment=ft.alignment.center,
-                    width=500,
-                    height=650,
-                    border_radius=10,
-                    ink=True,
-                    on_click=main_url,
+                        margin=10,
+                        padding=10,
+                        alignment=ft.alignment.center,
+                        width=500,
+                        height=650,
+                        border_radius=10,
+                        ink=True,
+                        on_click=main_url,
+
+                    )
                 )
-            )
+                print(f'{localhost}{item.image.url}')
+
+            else:
+                items_list.controls.append(
+                    ft.Container(
+                        content=ft.Column(
+                            [ft.Card(
+                                ft.Column(
+                                    [
+                                        ft.Row(height=250),
+                                        ft.Text('No photo available now',
+                                                width=500,
+                                                height=250,
+                                                size=26,
+                                                weight=ft.FontWeight.W_600,
+                                                text_align=ft.TextAlign.CENTER
+                                                ),
+                                    ]
+                                )
+                            ),
+                                ft.Row(
+                                    [ft.Text(item.name,
+                                             size=20,
+                                             weight=ft.FontWeight.W_300,
+                                             width=300,
+                                             no_wrap=False),
+                                     ft.Text(item.price,
+                                             size=26,
+                                             weight=ft.FontWeight.W_900)],
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                                )
+                            ]
+                        ),
+                        margin=10,
+                        padding=10,
+                        alignment=ft.alignment.center,
+                        width=500,
+                        height=650,
+                        border_radius=10,
+                        ink=True,
+                        on_click=main_url,
+                    )
+                )
+
+        return items_list
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
