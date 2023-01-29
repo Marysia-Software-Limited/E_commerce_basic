@@ -146,14 +146,6 @@ def main(page: ft.Page):
                                             text_align=ft.TextAlign.CENTER
                                             ),
                                 ]
-                                #     ft.Image(
-                                #     src=f"static/img/no_image.png",
-                                #     width=500,
-                                #     height=500,
-                                #     fit=ft.ImageFit.FILL,
-                                #     repeat=ft.ImageRepeat.NO_REPEAT,
-                                #     border_radius=ft.border_radius.all(10),
-                                # ),
                             )
                         ),
                             ft.Row(
