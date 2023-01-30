@@ -1,10 +1,10 @@
 import flet as ft
 
+from django.shortcuts import get_object_or_404
 from shop.models import Product, Category
 
 
 def main(page: ft.Page):
-
     # defining page title and ThemeMode control
     page.title = "Shop app Django/Flet"
 
@@ -35,8 +35,11 @@ def main(page: ft.Page):
     def main_url(_):
         return page.go("/")
 
-    def product_detail_url(_):
-        return page.go('/product_detail')
+    def product_detail_url(id):
+        def __wrap(e):
+            return page.go(f'/product_detail&{id}')
+
+        return __wrap
 
     def navbar(e):
         """
@@ -114,16 +117,17 @@ def main(page: ft.Page):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 )
             )
-        elif page.route == '/product_detail':
+        elif page.route.startswith('/product_detail'):
+            id = page.route.rsplit('&')[1]
             page.views.clear()
             page.views.append(
                 ft.View(
-                    "/products",
+                    f"/product_detail&{id}",
                     [
-                        ft.AppBar(title=ft.Text("Our products:"),
+                        ft.AppBar(title=ft.Text("Product details:"),
                                   bgcolor=ft.colors.SURFACE_VARIANT,
                                   center_title=True),
-                        view_multiple(products),
+                        view_product_detail(id),
                         page.navigation_bar,
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -188,11 +192,11 @@ def main(page: ft.Page):
                         height=650,
                         border_radius=10,
                         ink=True,
-                        on_click=main_url,
-
+                        on_click=product_detail_url(item.id),
                     )
                 )
-                print(f'{localhost}{item.image.url}')
+                # print(f'{localhost}{item.image.url}')
+                # print(f'{localhost}{link}')
 
             else:
                 items_list.controls.append(
@@ -237,6 +241,82 @@ def main(page: ft.Page):
                 )
 
         return items_list
+
+    def view_product_detail(item):
+        """
+        Display chosen element passed as a parameter.
+        Return a responsive view of this element details.
+
+        :param item: parameter passed to the view is an id of
+            an element to be displayed (product, service, map etc.)
+        :return: return the responsive view of elements
+            of the group passed as a parameter.
+        """
+        product = get_object_or_404(Product, id=item)
+
+        product_detail = ft.Row(expand=1, wrap=True,
+                                alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                scroll="always")
+        localhost = 'http://127.0.0.1:8000'
+        product_detail.controls.append(
+            ft.ResponsiveRow([
+                ft.Container(
+                    ft.Image(
+                        src=f"{localhost}{product.image.url}",
+                        width=500,
+                        height=500,
+                        fit=ft.ImageFit.FILL,
+                        repeat=ft.ImageRepeat.NO_REPEAT,
+                        border_radius=ft.border_radius.all(10),
+                    ),
+                    padding=1,
+                    col={"lg": 4},
+                ),
+                ft.Container(
+                    ft.Column([
+                        ft.Text(f'{product.name}',
+                                size=26,
+                                weight=ft.FontWeight.W_300,
+                                # width=500,
+                                height=350,
+                                no_wrap=False),
+                        ft.Text(f'{product.category}',
+                                size=20,
+                                weight=ft.FontWeight.W_300,
+                                # width=500,
+                                height=100,
+                                no_wrap=False),
+                        ft.Text(f'£ {product.price}',
+                                size=26,
+                                weight=ft.FontWeight.W_900,
+                                # width=500,
+                                height=50,
+                                no_wrap=False),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                    ),
+                    padding=1,
+                    col={"lg": 2},
+                ),
+                ft.Container(
+                    ft.Column([
+                        ft.Text(f'{product.description}',
+                                size=20,
+                                weight=ft.FontWeight.W_300,
+                                # width=500,
+                                # height=100,
+                                no_wrap=False),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                    padding=1,
+                    col={"lg": 6},
+                ),
+                ]
+            )
+        )
+        return product_detail
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop

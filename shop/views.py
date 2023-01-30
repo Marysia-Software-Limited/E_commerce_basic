@@ -29,8 +29,6 @@ def product_list(request, category_slug=None):
                    'products': products})
 
 
-
-
 # may need to change a parameter in product_detail function if
 # it causes problems ('shadows built-in name')
 def product_detail(request, id, slug):
