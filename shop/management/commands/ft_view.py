@@ -1,6 +1,7 @@
 import flet as ft
 
 from django.shortcuts import get_object_or_404
+
 from shop.models import Product, Category
 
 
@@ -53,6 +54,8 @@ def main(page: ft.Page):
             return page.go('/')
         elif e.data == '1':
             return page.go('/products')
+        # elif e.data == '2':
+        #     return page.go('/map')
 
     page.navigation_bar = ft.NavigationBar(
         destinations=[
@@ -62,6 +65,10 @@ def main(page: ft.Page):
             ft.NavigationDestination(
                 icon=ft.icons.STORE_OUTLINED,
                 label="Products"),
+            # ft.NavigationDestination(
+            #     icon=ft.icons.MAP_OUTLINED,
+            #     label="Find us!"
+            # )
         ],
         on_change=navbar
     )
@@ -124,7 +131,7 @@ def main(page: ft.Page):
                 ft.View(
                     f"/product_detail&{id}",
                     [
-                        ft.AppBar(title=ft.Text("Product details:"),
+                        ft.AppBar(title=ft.Text("Product details"),
                                   bgcolor=ft.colors.SURFACE_VARIANT,
                                   center_title=True),
                         view_product_detail(id),
@@ -133,6 +140,7 @@ def main(page: ft.Page):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 )
             )
+
         page.update()
 
     def view_pop(view):
@@ -195,8 +203,6 @@ def main(page: ft.Page):
                         on_click=product_detail_url(item.id),
                     )
                 )
-                # print(f'{localhost}{item.image.url}')
-                # print(f'{localhost}{link}')
 
             else:
                 items_list.controls.append(
@@ -259,6 +265,7 @@ def main(page: ft.Page):
                                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                 scroll="always")
         localhost = 'http://127.0.0.1:8000'
+
         product_detail.controls.append(
             ft.ResponsiveRow([
                 ft.Container(
@@ -278,22 +285,22 @@ def main(page: ft.Page):
                         ft.Text(f'{product.name}',
                                 size=26,
                                 weight=ft.FontWeight.W_300,
-                                # width=500,
-                                height=350,
+                                width=500,
+                                height=250,
                                 no_wrap=False),
                         ft.Text(f'{product.category}',
                                 size=20,
                                 weight=ft.FontWeight.W_300,
-                                # width=500,
+                                width=500,
                                 height=100,
                                 no_wrap=False),
                         ft.Text(f'£ {product.price}',
                                 size=26,
                                 weight=ft.FontWeight.W_900,
-                                # width=500,
+                                width=500,
                                 height=50,
                                 no_wrap=False),
-                        ],
+                    ],
                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                     ),
                     padding=1,
@@ -307,15 +314,16 @@ def main(page: ft.Page):
                                 # width=500,
                                 # height=100,
                                 no_wrap=False),
-                        ],
+                    ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
                     padding=1,
                     col={"lg": 6},
                 ),
-                ]
+            ]
             )
         )
+
         return product_detail
 
     page.on_route_change = route_change
