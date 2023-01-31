@@ -21,6 +21,8 @@ def main(page: ft.Page):
 
     products = Product.objects.filter(available=True)
 
+    localhost = 'http://127.0.0.1:8000'
+    
     # define a logo for the app and its location
     logo = ft.Image(
         src=f"http://127.0.0.1:8000/media/img/logo.png",
@@ -39,6 +41,13 @@ def main(page: ft.Page):
     def product_detail_url(id):
         def __wrap(e):
             return page.go(f'/product_detail&{id}')
+
+        return __wrap
+
+    # category_detail_url() directs to a main page for now
+    def category_detail_url(id):
+        def __wrap(e):
+            return page.go(f'/')
 
         return __wrap
 
@@ -70,7 +79,8 @@ def main(page: ft.Page):
             #     label="Find us!"
             # )
         ],
-        on_change=navbar
+        on_change=navbar,
+        bgcolor=ft.colors.BLACK54,
     )
 
     def route_change(route):
@@ -88,24 +98,28 @@ def main(page: ft.Page):
                 "/",
                 [
                     ft.AppBar(title=ft.Text("Endorsed by The Sea Nation"),
-                              bgcolor=ft.colors.SURFACE_VARIANT,
+                              bgcolor=ft.colors.BLACK38,
                               center_title=True),
+
                     ft.Text('The Way It Should Be', style=ft.TextThemeStyle.DISPLAY_LARGE),
                     logo,
-                    ft.Text('We founded Endorsed by The Sea Nation with one goal in mind: providing a high-quality, '
-                            'smart, and reliable online store. Our passion for excellence has driven us from the '
-                            'beginning and continues to drive us into the future. We know that every product counts, '
-                            'and strive to make the entire shopping experience as rewarding as possible. Check it out '
-                            'for yourself!',
-                            text_align=ft.TextAlign.JUSTIFY,
-                            style=ft.TextThemeStyle.TITLE_LARGE,
-                            no_wrap=False,
-                            ),
-                    ft.ElevatedButton("List products",
-                                      on_click=products_url),
+                    ft.Text(
+                        'We founded Endorsed by The Sea Nation with one goal in mind: providing a high-quality,'
+                        'smart, and reliable online store. Our passion for excellence has driven us from the '
+                        'beginning and continues to drive us into the future. We know that every product '
+                        'counts,'
+                        'and strive to make the entire shopping experience as rewarding as possible. Check it '
+                        'out'
+                        'for yourself!',
+                        text_align=ft.TextAlign.JUSTIFY,
+                        style=ft.TextThemeStyle.TITLE_LARGE,
+                        no_wrap=False,
+                    ),
+                    view_categories(categories),
                     page.navigation_bar,
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                bgcolor=ft.colors.BLACK26,
             )
         )
 
@@ -246,6 +260,138 @@ def main(page: ft.Page):
                     )
                 )
 
+        return items_list
+
+    def view_categories(items):
+
+        items_list = ft.Row([ft.Container(
+            content=ft.Column(
+                [ft.Stack(
+                    [
+                        ft.Image(
+                            src=f"{localhost}/media/img/all_bg.jpg",
+                            width=500,
+                            height=500,
+                            fit=ft.ImageFit.FILL,
+                            repeat=ft.ImageRepeat.NO_REPEAT,
+                            border_radius=ft.border_radius.all(10),
+                        ),
+                        ft.Row(
+                            [
+                                ft.Text(
+                                    "Browse all products",
+                                    color="white",
+                                    size=40,
+                                    weight=ft.FontWeight.W_900,
+                                    opacity=0.9,
+                                )
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ],
+                    width=500,
+                    height=500,
+                ),
+                    ft.Row(
+                        [ft.Text('',
+                                 size=30,
+                                 width=500,
+                                 height=100,
+                                 no_wrap=False)],
+                        alignment=ft.MainAxisAlignment.CENTER
+                    )]),
+            margin=10,
+            padding=10,
+            alignment=ft.alignment.center,
+            width=500,
+            height=600,
+            border_radius=10,
+            ink=True,
+            on_click=products_url)
+        ],
+            expand=1, wrap=True,
+            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            scroll="always"
+        )
+
+        for item in items:
+
+            link = item.get_absolute_url()
+            if item.image:
+
+                items_list.controls.append(
+                    ft.Container(
+                        content=ft.Column(
+                            [ft.Image(
+                                src=f"{localhost}{item.image.url}",
+                                width=500,
+                                height=500,
+                                fit=ft.ImageFit.FILL,
+                                repeat=ft.ImageRepeat.NO_REPEAT,
+                                border_radius=ft.border_radius.all(10),
+                            ),
+                                ft.Row(
+                                    [ft.Text(item.name,
+                                             size=30,
+                                             weight=ft.FontWeight.W_300,
+                                             width=300,
+                                             height=100,
+                                             no_wrap=False)],
+                                    alignment=ft.MainAxisAlignment.CENTER
+                                ),
+                            ]
+                        ),
+                        margin=10,
+                        padding=10,
+                        alignment=ft.alignment.center,
+                        width=500,
+                        height=600,
+                        border_radius=10,
+                        ink=True,
+                        on_click=category_detail_url(item.id),
+
+                    )
+                )
+                print(f'{localhost}{item.image.url}')
+            else:
+                items_list.controls.append(
+                    ft.Container(
+                        content=ft.Column(
+                            [ft.Card(
+                                ft.Column(
+                                    [
+                                        ft.Row(height=250),
+                                        ft.Text('No photo available now',
+                                                width=500,
+                                                height=250,
+                                                size=26,
+                                                weight=ft.FontWeight.W_600,
+                                                text_align=ft.TextAlign.CENTER
+                                                ),
+                                    ]
+                                )
+                            ),
+                                ft.Row(
+                                    [ft.Text(item.name,
+                                             size=20,
+                                             weight=ft.FontWeight.W_300,
+                                             width=300,
+                                             no_wrap=False)],
+                                    alignment=ft.MainAxisAlignment.CENTER
+                                )
+                            ]
+                        ),
+                        margin=10,
+                        padding=10,
+                        alignment=ft.alignment.center,
+                        width=500,
+                        height=600,
+                        border_radius=10,
+                        ink=True,
+                        on_click=category_detail_url(item.id),
+                    )
+                )
         return items_list
 
     def view_product_detail(item):
