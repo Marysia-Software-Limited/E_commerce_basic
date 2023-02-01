@@ -47,7 +47,7 @@ def main(page: ft.Page):
     # category_detail_url() directs to a main page for now
     def category_detail_url(id):
         def __wrap(e):
-            return page.go(f'/')
+            return page.go(f'/category_detail&{id}')
 
         return __wrap
 
@@ -63,8 +63,8 @@ def main(page: ft.Page):
             return page.go('/')
         elif e.data == '1':
             return page.go('/products')
-        # elif e.data == '2':
-        #     return page.go('/map')
+        elif e.data == '2':
+            return page.go('/categories')
 
     page.navigation_bar = ft.NavigationBar(
         destinations=[
@@ -74,10 +74,10 @@ def main(page: ft.Page):
             ft.NavigationDestination(
                 icon=ft.icons.STORE_OUTLINED,
                 label="Products"),
-            # ft.NavigationDestination(
-            #     icon=ft.icons.MAP_OUTLINED,
-            #     label="Find us!"
-            # )
+            ft.NavigationDestination(
+                icon=ft.icons.MAP_OUTLINED,
+                label="Categories"
+            )
         ],
         on_change=navbar,
         bgcolor=ft.colors.BLACK54,
@@ -130,9 +130,24 @@ def main(page: ft.Page):
                     "/products",
                     [
                         ft.AppBar(title=ft.Text("Our products:"),
-                                  bgcolor=ft.colors.SURFACE_VARIANT,
+                                  bgcolor=ft.colors.BLACK38,
                                   center_title=True),
                         view_multiple(products),
+                        page.navigation_bar,
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+            )
+        elif page.route == "/categories":
+            page.views.clear()
+            page.views.append(
+                ft.View(
+                    "/categories",
+                    [
+                        ft.AppBar(title=ft.Text("Product categories:"),
+                                  bgcolor=ft.colors.BLACK38,
+                                  center_title=True),
+                        view_categories(categories),
                         page.navigation_bar,
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -146,9 +161,26 @@ def main(page: ft.Page):
                     f"/product_detail&{id}",
                     [
                         ft.AppBar(title=ft.Text("Product details"),
-                                  bgcolor=ft.colors.SURFACE_VARIANT,
+                                  bgcolor=ft.colors.BLACK38,
                                   center_title=True),
                         view_product_detail(id),
+                        page.navigation_bar,
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                )
+            )
+        elif page.route.startswith('/category_detail'):
+            id = page.route.rsplit('&')[1]
+            category = get_object_or_404(Category, id=id)
+            page.views.clear()
+            page.views.append(
+                ft.View(
+                    f"/category_detail&{id}",
+                    [
+                        ft.AppBar(title=ft.Text(f"{category} - products"),
+                                  bgcolor=ft.colors.BLACK38,
+                                  center_title=True),
+                        view_category_detail(id),
                         page.navigation_bar,
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -172,7 +204,7 @@ def main(page: ft.Page):
         :return: return the responsive view of elements
             of the group passed as a parameter.
         """
-        localhost = 'http://127.0.0.1:8000'
+
         items_list = ft.Row(expand=1, wrap=True,
                             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -307,7 +339,8 @@ def main(page: ft.Page):
             height=600,
             border_radius=10,
             ink=True,
-            on_click=products_url)
+            on_click=products_url
+            )
         ],
             expand=1, wrap=True,
             alignment=ft.MainAxisAlignment.SPACE_EVENLY,
@@ -353,7 +386,7 @@ def main(page: ft.Page):
 
                     )
                 )
-                print(f'{localhost}{item.image.url}')
+
             else:
                 items_list.controls.append(
                     ft.Container(
@@ -394,6 +427,23 @@ def main(page: ft.Page):
                 )
         return items_list
 
+    def view_category_detail(item):
+        """
+        Display products in chosen category passed as a parameter.
+        Return a responsive view of this element details.
+
+        :param item: parameter passed to the view is an id of
+            an element to be displayed (product, service, map etc.)
+        :return: return the responsive view of elements
+            of the group passed as a parameter.
+        """
+
+        category = get_object_or_404(Category, id=item)
+
+        products_filtered = products.filter(category=category)
+
+        return view_multiple(products_filtered)
+
     def view_product_detail(item):
         """
         Display chosen element passed as a parameter.
@@ -410,7 +460,6 @@ def main(page: ft.Page):
                                 alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                 scroll="always")
-        localhost = 'http://127.0.0.1:8000'
 
         product_detail.controls.append(
             ft.ResponsiveRow([
