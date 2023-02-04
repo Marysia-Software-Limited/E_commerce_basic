@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'payment.apps.PaymentConfig',
     'import_export',
+    'flet_django',
 ]
 
 MIDDLEWARE = [

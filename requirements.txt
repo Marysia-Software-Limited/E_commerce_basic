@@ -36,3 +36,7 @@ WeasyPrint >= 56.1
 # https://django-import-export.readthedocs.io/en/latest/getting_started.html#creating-import-export-resource
 
 django-import-export>=3.0
+
+# Django+Flutter connection package to allow Flet to work properly with Django
+
+flet-django
