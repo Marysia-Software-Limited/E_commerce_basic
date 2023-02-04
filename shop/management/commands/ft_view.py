@@ -26,8 +26,8 @@ def main(page: ft.Page):
     # define a logo for the app and its location
     logo = ft.Image(
         src=f"http://127.0.0.1:8000/media/img/logo.png",
-        width=400,
-        height=400,
+        width=200,
+        height=200,
         fit=ft.ImageFit.FILL,
     )
 
