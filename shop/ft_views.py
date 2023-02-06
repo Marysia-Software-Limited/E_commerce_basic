@@ -4,19 +4,27 @@ from django.shortcuts import get_object_or_404
 from flet_django.views import ft_view
 from shop.models import Product, Category
 
-categories = Category.objects.all()
+# definitions for commonly used variables
 
-products = Product.objects.filter(available=True)
 
-localhost = 'http://127.0.0.1:8000'
+Localhost = 'http://127.0.0.1:8000'
 
 # define a logo for the app and its location
 logo = ft.Image(
-    src=f"{localhost}/media/img/logo.png",
+    src=f"{Localhost}/media/img/logo.png",
     width=200,
     height=200,
     fit=ft.ImageFit.FILL,
 )
+
+
+# block with helper functions facilitating access to data or urls according to need
+def get_categories():
+    return Category.objects.all()
+
+
+def get_products():
+    return Product.objects.filter(available=True)
 
 
 def product_detail_url(page, id):
@@ -34,6 +42,24 @@ def category_detail_url(page, id):
 
 
 def list_items(page, items, kind):
+    """
+    Display chosen group passed as a parameter.
+    Return a responsive view of group elements.
+
+    :param page: This is a session object; Page is a container for View controls.
+        A page instance and the root view are automatically
+        created when a new user session started.
+        See detailed info at https://flet.dev/docs/controls/page
+    :param kind: define what group of data is being used (products|categories|other)
+        Parameter is used for defining the details of accessing data,
+        information displayed and urls used.
+    :param items: parameter passed to the view is
+        a list of elements to be displayed
+        (products, services, categories etc.)
+    :return: return the responsive view of elements
+        of the group passed as a parameter.
+    """
+
     detail_link = ''
 
     items_list = ft.Row(expand=1, wrap=True,
@@ -54,7 +80,7 @@ def list_items(page, items, kind):
                 ft.Container(
                     content=ft.Column(
                         [ft.Image(
-                            src=f"{localhost}{item.image.url}",
+                            src=f"{Localhost}{item.image.url}",
                             width=500,
                             height=500,
                             fit=ft.ImageFit.FILL,
@@ -125,7 +151,25 @@ def list_items(page, items, kind):
     return items_list
 
 
-def detail_view(page, item, kind):
+def item_detail(page, item, kind):
+    """
+    Display chosen element passed as a parameter.
+    Return a responsive view of the element details
+    depending on its type.
+
+    :param page: This is a session object; Page is a container for View controls.
+        A page instance and the root view are automatically
+        created when a new user session started.
+        See detailed info at https://flet.dev/docs/controls/page
+    :param kind: define what group of data is being used (products|categories|other)
+        Parameter is used for defining the details of accessing data,
+        information displayed and urls used.
+    :param item: parameter passed to the view is an id of
+        an element to be displayed (product, service, map etc.)
+    :return: return the responsive view of elements
+        of the group passed as a parameter.
+    """
+    products = get_products()
 
     if kind == 'category':
 
@@ -146,7 +190,7 @@ def detail_view(page, item, kind):
             ft.ResponsiveRow([
                 ft.Container(
                     ft.Image(
-                        src=f"{localhost}{product.image.url}",
+                        src=f"{Localhost}{product.image.url}",
                         width=500,
                         height=500,
                         fit=ft.ImageFit.FILL,
@@ -203,7 +247,9 @@ def detail_view(page, item, kind):
         return product_detail
 
 
+# block with functions defining particular views in the app
 def home(page):
+    categories = get_categories()
     return ft_view(
         page,
         controls=[ft.Text('The Way It Should Be', style=ft.TextThemeStyle.DISPLAY_LARGE),
@@ -228,6 +274,7 @@ def home(page):
 
 
 def products_view(page):
+    products = get_products()
     return ft_view(
         page,
         controls=[
@@ -238,6 +285,7 @@ def products_view(page):
 
 
 def categories_view(page):
+    categories = get_categories()
     return ft_view(
         page,
         controls=[
@@ -251,7 +299,7 @@ def category_detail_view(page, id):
     return ft_view(
         page,
         controls=[
-            detail_view(page, id, 'category')
+            item_detail(page, id, 'category')
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
@@ -261,7 +309,7 @@ def product_detail_view(page, id):
     return ft_view(
         page,
         controls=[
-            detail_view(page, id, 'product')
+            item_detail(page, id, 'product')
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
