@@ -29,19 +29,12 @@ def product_detail_url(page, id):
 def category_detail_url(page, id):
     def __wrap(e):
         return page.go(f'/category_detail&{id}')
+
     return __wrap
 
 
-def view_multiple(page, items):
-    """
-    Display multiple elements of a group passed as a parameter.
-    Return a responsive view of its elements.
-
-    :param items: parameter passed to the view is a name of
-        a group to be displayed (products, services, categories etc.)
-    :return: return the responsive view of elements
-        of the group passed as a parameter.
-    """
+def list_items(page, items, kind):
+    detail_link = ''
 
     items_list = ft.Row(expand=1, wrap=True,
                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
@@ -50,104 +43,11 @@ def view_multiple(page, items):
 
     for item in items:
 
-        link = item.get_absolute_url()
-        if item.image:
+        if kind == 'product':
+            detail_link = product_detail_url(page, item.id)
+        elif kind == 'category':
+            detail_link = category_detail_url(page, item.id)
 
-            items_list.controls.append(
-                ft.Container(
-                    content=ft.Column(
-                        [ft.Image(
-                            src=f"{localhost}{item.image.url}",
-                            width=500,
-                            height=500,
-                            fit=ft.ImageFit.FILL,
-                            repeat=ft.ImageRepeat.NO_REPEAT,
-                            border_radius=ft.border_radius.all(10),
-                        ),
-                            ft.Row(
-                                [ft.Text(item.name,
-                                         size=20,
-                                         weight=ft.FontWeight.W_300,
-                                         width=300,
-                                         no_wrap=False),
-                                 ft.Text(item.price,
-                                         size=26,
-                                         weight=ft.FontWeight.W_900)],
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                            ),
-                        ]
-                    ),
-                    margin=10,
-                    padding=10,
-                    alignment=ft.alignment.center,
-                    width=500,
-                    height=650,
-                    border_radius=10,
-                    ink=True,
-                    on_click=product_detail_url(page, item.id),
-                )
-            )
-
-        else:
-            items_list.controls.append(
-                ft.Container(
-                    content=ft.Column(
-                        [ft.Card(
-                            ft.Column(
-                                [
-                                    ft.Row(height=250),
-                                    ft.Text('No photo available now',
-                                            width=500,
-                                            height=250,
-                                            size=26,
-                                            weight=ft.FontWeight.W_600,
-                                            text_align=ft.TextAlign.CENTER
-                                            ),
-                                ]
-                            )
-                        ),
-                            ft.Row(
-                                [ft.Text(item.name,
-                                         size=20,
-                                         weight=ft.FontWeight.W_300,
-                                         width=300,
-                                         no_wrap=False),
-                                 ft.Text(item.price,
-                                         size=26,
-                                         weight=ft.FontWeight.W_900)],
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                            )
-                        ]
-                    ),
-                    margin=10,
-                    padding=10,
-                    alignment=ft.alignment.center,
-                    width=500,
-                    height=650,
-                    border_radius=10,
-                    ink=True,
-                    # on_click=main_url,
-                )
-            )
-
-    return items_list
-
-
-def view_categories(page, items):
-
-    return list_items(page, items)
-
-
-def list_items(page, items):
-
-    items_list = ft.Row(expand=1, wrap=True,
-                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        scroll="always")
-
-    for item in items:
-
-        # link = item.get_absolute_url()
         if item.image:
 
             items_list.controls.append(
@@ -179,7 +79,7 @@ def list_items(page, items):
                     height=600,
                     border_radius=10,
                     ink=True,
-                    on_click=category_detail_url(page, item.id),
+                    on_click=detail_link,
 
                 )
             )
@@ -219,107 +119,88 @@ def list_items(page, items):
                     height=600,
                     border_radius=10,
                     ink=True,
-                    on_click=category_detail_url(page, item.id),
+                    on_click=detail_link,
                 )
             )
     return items_list
 
-def view_category_detail(page, item):
-    """
-    Display products in chosen category passed as a parameter.
-    Return a responsive view of this element details.
 
-    :param page:
-    :param item: parameter passed to the view is an id of
-        an element to be displayed (product, service, map etc.)
-    :return: return the responsive view of elements
-        of the group passed as a parameter.
-    """
+def detail_view(page, item, kind):
 
-    category = get_object_or_404(Category, id=item)
+    if kind == 'category':
 
-    products_filtered = products.filter(category=category)
+        category = get_object_or_404(Category, id=item)
+        products_filtered = products.filter(category=category)
+        return list_items(page, products_filtered, 'product')
 
-    return view_multiple(page, products_filtered)
+    elif kind == 'product':
 
+        product = get_object_or_404(Product, id=item)
 
-def view_product_detail(page, item):
-    """
-    Display chosen element passed as a parameter.
-    Return a responsive view of this element details.
+        product_detail = ft.Row(expand=1, wrap=True,
+                                alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                scroll="always")
 
-    :param page:
-    :param item: parameter passed to the view is an id of
-        an element to be displayed (product, service, map etc.)
-    :return: return the responsive view of elements
-        of the group passed as a parameter.
-    """
-    product = get_object_or_404(Product, id=item)
-
-    product_detail = ft.Row(expand=1, wrap=True,
-                            alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            scroll="always")
-
-    product_detail.controls.append(
-        ft.ResponsiveRow([
-            ft.Container(
-                ft.Image(
-                    src=f"{localhost}{product.image.url}",
-                    width=500,
-                    height=500,
-                    fit=ft.ImageFit.FILL,
-                    repeat=ft.ImageRepeat.NO_REPEAT,
-                    border_radius=ft.border_radius.all(10),
+        product_detail.controls.append(
+            ft.ResponsiveRow([
+                ft.Container(
+                    ft.Image(
+                        src=f"{localhost}{product.image.url}",
+                        width=500,
+                        height=500,
+                        fit=ft.ImageFit.FILL,
+                        repeat=ft.ImageRepeat.NO_REPEAT,
+                        border_radius=ft.border_radius.all(10),
+                    ),
+                    padding=1,
+                    col={"lg": 4},
                 ),
-                padding=1,
-                col={"lg": 4},
-            ),
-            ft.Container(
-                ft.Column([
-                    ft.Text(f'{product.name}',
-                            size=26,
-                            weight=ft.FontWeight.W_300,
-                            width=500,
-                            height=250,
-                            no_wrap=False),
-                    ft.Text(f'{product.category}',
-                            size=20,
-                            weight=ft.FontWeight.W_300,
-                            width=500,
-                            height=100,
-                            no_wrap=False),
-                    ft.Text(f'£ {product.price}',
-                            size=26,
-                            weight=ft.FontWeight.W_900,
-                            width=500,
-                            height=50,
-                            no_wrap=False),
-                ],
-                    alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                ft.Container(
+                    ft.Column([
+                        ft.Text(f'{product.name}',
+                                size=26,
+                                weight=ft.FontWeight.W_300,
+                                width=500,
+                                height=250,
+                                no_wrap=False),
+                        ft.Text(f'{product.category}',
+                                size=20,
+                                weight=ft.FontWeight.W_300,
+                                width=500,
+                                height=100,
+                                no_wrap=False),
+                        ft.Text(f'£ {product.price}',
+                                size=26,
+                                weight=ft.FontWeight.W_900,
+                                width=500,
+                                height=50,
+                                no_wrap=False),
+                    ],
+                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                    ),
+                    padding=1,
+                    col={"lg": 2},
                 ),
-                padding=1,
-                col={"lg": 2},
-            ),
-            ft.Container(
-                ft.Column([
-                    ft.Text(f'{product.description}',
-                            size=20,
-                            weight=ft.FontWeight.W_300,
-                            # width=500,
-                            # height=100,
-                            no_wrap=False),
-                ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ft.Container(
+                    ft.Column([
+                        ft.Text(f'{product.description}',
+                                size=20,
+                                weight=ft.FontWeight.W_300,
+                                # width=500,
+                                # height=100,
+                                no_wrap=False),
+                    ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                    padding=1,
+                    col={"lg": 6},
                 ),
-                padding=1,
-                col={"lg": 6},
-            ),
-        ]
+            ]
+            )
         )
-    )
 
-    return product_detail
+        return product_detail
 
 
 def home(page):
@@ -339,7 +220,7 @@ def home(page):
                       style=ft.TextThemeStyle.TITLE_LARGE,
                       no_wrap=False,
                   ),
-                  view_categories(page, categories),
+                  list_items(page, categories, 'category'),
                   ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         bgcolor=ft.colors.BLACK26,
@@ -350,7 +231,7 @@ def products_view(page):
     return ft_view(
         page,
         controls=[
-            view_multiple(page, products),
+            list_items(page, products, 'product'),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
@@ -360,7 +241,7 @@ def categories_view(page):
     return ft_view(
         page,
         controls=[
-            view_categories(page, categories),
+            list_items(page, categories, 'category'),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
@@ -370,7 +251,7 @@ def category_detail_view(page, id):
     return ft_view(
         page,
         controls=[
-            view_category_detail(page, id)
+            detail_view(page, id, 'category')
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
@@ -380,7 +261,7 @@ def product_detail_view(page, id):
     return ft_view(
         page,
         controls=[
-            view_product_detail(page, id)
+            detail_view(page, id, 'product')
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
