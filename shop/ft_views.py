@@ -12,13 +12,28 @@ localhost = 'http://127.0.0.1:8000'
 
 # define a logo for the app and its location
 logo = ft.Image(
-    src=f"http://127.0.0.1:8000/media/img/logo.png",
+    src=f"{localhost}/media/img/logo.png",
     width=200,
     height=200,
     fit=ft.ImageFit.FILL,
 )
 
-def view_multiple(items):
+
+def product_detail_url(page, id):
+    def __wrap(e):
+        return page.go(f'/product_detail&{id}')
+
+    return __wrap
+
+
+def category_detail_url(page, id):
+    def __wrap(e):
+        return page.go(f'/category_detail&{id}')
+
+    return __wrap
+
+
+def view_multiple(page, items):
     """
     Display multiple elements of a group passed as a parameter.
     Return a responsive view of its elements.
@@ -70,7 +85,7 @@ def view_multiple(items):
                     height=650,
                     border_radius=10,
                     ink=True,
-                    # on_click=product_detail_url(item.id),
+                    on_click=product_detail_url(page, item.id),
                 )
             )
 
@@ -119,7 +134,7 @@ def view_multiple(items):
     return items_list
 
 
-def view_categories(items):
+def view_categories(page, items):
     items_list = ft.Row([ft.Container(
         content=ft.Column(
             [ft.Stack(
@@ -163,7 +178,7 @@ def view_categories(items):
         height=600,
         border_radius=10,
         ink=True,
-        on_click=products_view
+        on_click=page.go('/products')
     )
     ],
         expand=1, wrap=True,
@@ -206,7 +221,7 @@ def view_categories(items):
                     height=600,
                     border_radius=10,
                     ink=True,
-                    # on_click=category_detail_url(item.id),
+                    on_click=category_detail_url(page, item.id),
 
                 )
             )
@@ -246,13 +261,13 @@ def view_categories(items):
                     height=600,
                     border_radius=10,
                     ink=True,
-                    # on_click=category_detail_url(item.id),
+                    on_click=category_detail_url(page, item.id),
                 )
             )
     return items_list
 
 
-def view_category_detail(item):
+def view_category_detail(page, item):
     """
     Display products in chosen category passed as a parameter.
     Return a responsive view of this element details.
@@ -267,10 +282,10 @@ def view_category_detail(item):
 
     products_filtered = products.filter(category=category)
 
-    return view_multiple(products_filtered)
+    return view_multiple(page, products_filtered)
 
 
-def view_product_detail(item):
+def view_product_detail(page, item):
     """
     Display chosen element passed as a parameter.
     Return a responsive view of this element details.
@@ -365,7 +380,7 @@ def home(page):
                       style=ft.TextThemeStyle.TITLE_LARGE,
                       no_wrap=False,
                   ),
-                  view_categories(categories),
+                  view_categories(page, categories),
                   ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         bgcolor=ft.colors.BLACK26,
@@ -376,7 +391,7 @@ def products_view(page):
     return ft_view(
         page,
         controls=[
-            view_multiple(products),
+            view_multiple(page, products),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
@@ -386,7 +401,23 @@ def categories_view(page):
     return ft_view(
         page,
         controls=[
-            view_categories(categories),
+            view_categories(page, categories),
         ],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+
+def category_detail_view(page, id):
+    return ft_view(
+        page,
+        controls=[],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+
+def product_detail_view(page, id):
+    return ft_view(
+        page,
+        controls=[],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
