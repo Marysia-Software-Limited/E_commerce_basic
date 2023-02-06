@@ -410,7 +410,9 @@ def categories_view(page):
 def category_detail_view(page, id):
     return ft_view(
         page,
-        controls=[],
+        controls=[
+            view_category_detail(page, id)
+        ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
@@ -418,6 +420,8 @@ def category_detail_view(page, id):
 def product_detail_view(page, id):
     return ft_view(
         page,
-        controls=[],
+        controls=[
+            view_product_detail(page, id)
+        ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
