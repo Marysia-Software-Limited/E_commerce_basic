@@ -29,7 +29,6 @@ def product_detail_url(page, id):
 def category_detail_url(page, id):
     def __wrap(e):
         return page.go(f'/category_detail&{id}')
-
     return __wrap
 
 
@@ -135,61 +134,20 @@ def view_multiple(page, items):
 
 
 def view_categories(page, items):
-    items_list = ft.Row([ft.Container(
-        content=ft.Column(
-            [ft.Stack(
-                [
-                    ft.Image(
-                        src=f"{localhost}/media/img/all_bg.jpg",
-                        width=500,
-                        height=500,
-                        fit=ft.ImageFit.FILL,
-                        repeat=ft.ImageRepeat.NO_REPEAT,
-                        border_radius=ft.border_radius.all(10),
-                    ),
-                    ft.Row(
-                        [
-                            ft.Text(
-                                "Browse all products",
-                                color="white",
-                                size=40,
-                                weight=ft.FontWeight.W_900,
-                                opacity=0.9,
-                            )
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-                ],
-                width=500,
-                height=500,
-            ),
-                ft.Row(
-                    [ft.Text('',
-                             size=30,
-                             width=500,
-                             height=100,
-                             no_wrap=False)],
-                    alignment=ft.MainAxisAlignment.CENTER
-                )]),
-        margin=10,
-        padding=10,
-        alignment=ft.alignment.center,
-        width=500,
-        height=600,
-        border_radius=10,
-        ink=True,
-        on_click=page.go('/products')
-    )
-    ],
-        expand=1, wrap=True,
-        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        scroll="always"
-    )
+
+    return list_items(page, items)
+
+
+def list_items(page, items):
+
+    items_list = ft.Row(expand=1, wrap=True,
+                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        scroll="always")
 
     for item in items:
 
-        link = item.get_absolute_url()
+        # link = item.get_absolute_url()
         if item.image:
 
             items_list.controls.append(
@@ -266,12 +224,12 @@ def view_categories(page, items):
             )
     return items_list
 
-
 def view_category_detail(page, item):
     """
     Display products in chosen category passed as a parameter.
     Return a responsive view of this element details.
 
+    :param page:
     :param item: parameter passed to the view is an id of
         an element to be displayed (product, service, map etc.)
     :return: return the responsive view of elements
@@ -290,6 +248,7 @@ def view_product_detail(page, item):
     Display chosen element passed as a parameter.
     Return a responsive view of this element details.
 
+    :param page:
     :param item: parameter passed to the view is an id of
         an element to be displayed (product, service, map etc.)
     :return: return the responsive view of elements
