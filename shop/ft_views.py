@@ -3,6 +3,7 @@ import flet as ft
 from django.shortcuts import get_object_or_404
 from flet_django.views import ft_view
 from shop.models import Product, Category
+from cart.ft_cart import CartFt
 
 # definitions for commonly used variables
 
@@ -37,6 +38,27 @@ def product_detail_url(page, id):
 def category_detail_url(page, id):
     def __wrap(e):
         return page.go(f'/category_detail&{id}')
+
+    return __wrap
+
+
+def products_url(page):
+    def __wrap(e):
+        return page.go(f'/products')
+
+    return __wrap
+
+
+def categories_url(page):
+    def __wrap(e):
+        return page.go(f'/categories')
+
+    return __wrap
+
+
+def cart_url(page):
+    def __wrap(e):
+        return page.go(f'/cart')
 
     return __wrap
 
@@ -306,10 +328,42 @@ def category_detail_view(page, id):
 
 
 def product_detail_view(page, id):
+    click_link = products_url(page)
     return ft_view(
         page,
         controls=[
-            item_detail(page, id, 'product')
+            item_detail(page, id, 'product'),
+            ft.FilledButton(text='Add to cart',
+                            icon=ft.icons.SHOPPING_CART,
+                            on_click=lambda e:cart_add(page, id, 1)),
+            ft.FilledButton(text='Remove from cart',
+                            icon=ft.icons.SHOPPING_CART,
+                            on_click=lambda e:cart_add(page, id, -1)),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
+
+
+def cart_add(page, product_id, quantity):
+    """
+    Receive product ID as a parameter and
+    retrieve the Product instance with given ID;
+    Validate CartAddProductForm - if valid,
+    add or update item in the cart and redirect
+    to the cart_detail URL to display cart contents.
+    :param page: This is a session object; Page is a container for View controls.
+        A page instance and the root view are automatically
+        created when a new user session started.
+        See detailed info at https://flet.dev/docs/controls/page
+    :param product_id: passing product id value
+    :return: redirect to the cart_detail page.
+    """
+    cart = CartFt(page)
+    product = get_object_or_404(Product, id=product_id)
+    # form = CartAddProductForm(request.POST)
+    # if form.is_valid():
+    cart.add(product=product, quantity=quantity)
+    cart.save()
+    print(cart.get_total_price())
+
+    return
