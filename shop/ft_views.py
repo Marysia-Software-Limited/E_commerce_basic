@@ -242,6 +242,9 @@ def item_detail(page, item, kind):
                                 width=500,
                                 height=50,
                                 no_wrap=False),
+                        ft.FilledButton(text='Add to cart',
+                                        icon=ft.icons.SHOPPING_CART,
+                                        on_click=lambda e:cart_add(page, item)),
                     ],
                         alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                     ),
@@ -328,23 +331,17 @@ def category_detail_view(page, id):
 
 
 def product_detail_view(page, id):
-    click_link = products_url(page)
+
     return ft_view(
         page,
         controls=[
             item_detail(page, id, 'product'),
-            ft.FilledButton(text='Add to cart',
-                            icon=ft.icons.SHOPPING_CART,
-                            on_click=lambda e:cart_add(page, id, 1)),
-            ft.FilledButton(text='Remove from cart',
-                            icon=ft.icons.SHOPPING_CART,
-                            on_click=lambda e:cart_add(page, id, -1)),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
 
-def cart_add(page, product_id, quantity):
+def cart_add(page, product_id):
     """
     Receive product ID as a parameter and
     retrieve the Product instance with given ID;
@@ -360,10 +357,13 @@ def cart_add(page, product_id, quantity):
     """
     cart = CartFt(page)
     product = get_object_or_404(Product, id=product_id)
-    # form = CartAddProductForm(request.POST)
-    # if form.is_valid():
-    cart.add(product=product, quantity=quantity)
+    cart.add(product=product)
     cart.save()
-    print(cart.get_total_price())
+
+    # test printouts
+    # print(cart.get_total_price())
+
+    for item in iter(cart):
+        print(item)
 
     return

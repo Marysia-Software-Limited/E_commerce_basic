@@ -33,6 +33,15 @@ destinations = [
         action=True,
         nav_rail=False
     ),
+    Fatum(
+        route="/cart",
+        icon=ft.icons.SHOPPING_CART,
+        selected_icon=ft.icons.SHOPPING_CART,
+        label="Cart",
+        nav_bar=True,
+        action=True,
+        nav_rail=False
+    ),
 ]
 
 main = GenericApp(
