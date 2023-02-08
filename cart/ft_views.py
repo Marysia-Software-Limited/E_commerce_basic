@@ -213,6 +213,7 @@ def cart_view(page):
         page,
         controls=[
             cart_detail(page),
+            ft.FilledButton('Order', on_click=lambda e:page.go(f'/order'))
             # cart_total(page),
         ],
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
