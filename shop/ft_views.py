@@ -367,3 +367,19 @@ def cart_add(page, product_id):
         print(item)
 
     return
+
+
+def thanks_view(page):
+
+    return ft_view(
+        page,
+        controls=[
+            ft.Image(
+                src=f"{Localhost}/media/img/thank_you.jpg",
+                width=675,
+                height=750,
+                fit=ft.ImageFit.FILL,
+            ),
+        ],
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    )
